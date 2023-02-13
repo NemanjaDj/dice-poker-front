@@ -1,15 +1,35 @@
 <div class="container">
     <div class="opponent">
         <p>{{opponentName}}</p>
-        {{opponentCombination}}
+        <table>
+            <tr>
+                <td *ngFor="let number of opponentCombination">
+                    <img src="..\..\assets\images\{{number}}.png" class="diceImage"/>
+                </td>
+            </tr>
+        </table>
+        <br>
     </div>
 <br>
 <br>
     <div class="player">
-        <p>{{hand.numbers}}</p>
+        <table>
+            <tr>
+                <td *ngFor="let number of handNumbers">
+                    <img src="..\..\assets\images\{{number}}.png" class="diceImage"/>
+                </td>
+            </tr>
+        </table>
         <p>{{playerName}}</p>
-        <button (click)="throwDices()">throw dices</button>
+        <br>
         <p>{{handPower}}</p>
+        <div *ngIf="isFirstThrow">
+            <button (click)="throwDices()">Throw dices</button>
+        </div>
+        <div *ngIf="!isFirstThrow">
+            <button (click)="reroll()">Reroll</button>
+            <button>Continue</button>
+        </div>
     </div>
 </div>
 

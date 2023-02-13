@@ -12,9 +12,11 @@ import { GameComponentServiceService } from './game.component.service.service';
 export class GameComponent implements OnInit{
   hand: Hand;
   opponentName = 'Computer';
-  opponentCombination = '12345';
+  opponentCombination = [1,2,3,4,5];
   playerName = 'Player 1';
-  handPower = HandPowerType.FiveOfAKind;
+  handPower = HandPowerType[HandPowerType.FiveOfAKind];
+  handNumbers: number[] = [];
+  isFirstThrow = true;
   
   constructor(private gameService: GameComponentServiceService) { }
 
@@ -42,8 +44,24 @@ export class GameComponent implements OnInit{
       console.log(data),
       console.log(data.id),
       this.gameService.getHandPower(data.id).pipe(take(1)).subscribe(a => {
-        this.handPower = a.handPowerType
-      })
+        this.handPower = HandPowerType[a.handPowerType]
+      }),
+      this.getNumbers();
     })
+  }
+
+  getNumbers(){
+    const numbers = this.trimNumbers(this.hand.numbers);
+    var listOfNumbers: number[] = [];
+
+    for(var i = 0; i < numbers.length; i++){
+      listOfNumbers.push(Number(numbers[i]));
+    }
+
+    this.handNumbers = listOfNumbers;
+  }
+
+  reroll(){
+    
   }
 }

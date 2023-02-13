@@ -18,6 +18,10 @@ export class GameComponentServiceService {
     return this.http.post<Hand>('https://localhost:44303/Game', null);
   }
 
+  rerollDices(handId: number, numbersAtIndex: number[]) {
+    return this.http.put<Hand>('https://localhost:44303/Game?id=' + handId, numbersAtIndex);
+  }
+
   getHandPower(handId: number) {
     return this.http.post<HandPower>('https://localhost:44303/api/HandPower?id=' + handId, null);
   }
