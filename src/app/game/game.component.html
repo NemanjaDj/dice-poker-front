@@ -24,11 +24,11 @@
         <br>
         <p>{{handPower}}</p>
         <div *ngIf="isFirstThrow">
-            <button (click)="throwDices()">Throw dices</button>
+            <button (click)="throwDices()" class="btn btn-primary">Throw dices</button>
         </div>
         <div *ngIf="!isFirstThrow">
-            <button (click)="reroll()">Reroll</button>
-            <button>Continue</button>
+            <button (click)="reroll()" *ngIf="canReroll" class="btn btn-primary">Reroll</button>
+            <button (click)="setNewRound()" class="btn btn-primary">Continue</button>
         </div>
     </div>
 </div>
