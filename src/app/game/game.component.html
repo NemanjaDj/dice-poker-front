@@ -26,7 +26,7 @@
         <br>
         <p>{{handPower}}</p>
         <div *ngIf="isFirstThrow">
-            <button (click)="throwDices()" class="btn btn-primary">Throw dices</button>
+            <button (click)="throwDicesPlayer1()" class="btn btn-primary">Throw dices</button>
         </div>
         <div *ngIf="!isFirstThrow">
             <button (click)="reroll()" *ngIf="canReroll" class="btn btn-primary">Reroll</button>

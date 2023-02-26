@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { map, mergeMap, take } from 'rxjs';
 import { HandPowerType } from '../shared/enums/handPower';
 import { Hand } from '../shared/models/hand';
+import { OpponentHand } from '../shared/models/opponentHand';
 import { GameComponentServiceService } from './game.component.service.service';
 
 @Component({
@@ -11,8 +12,9 @@ import { GameComponentServiceService } from './game.component.service.service';
 })
 export class GameComponent implements OnInit{
   hand: Hand;
+  opponentHand: OpponentHand;
   opponentName = 'Computer';
-  opponentCombination = [1,2,3,4,5];
+  opponentCombination: number[] = [];
   playerName = 'Player 1';
   handPower = HandPowerType[HandPowerType.FiveOfAKind];
   handNumbers: number[] = [];
@@ -24,39 +26,63 @@ export class GameComponent implements OnInit{
 
   ngOnInit() {
     this.hand = {id: 1, numbers: '12345', numberOfThrows: 2};
+    this.opponentHand = {id: 1, handNumbers: '12345', numberOfThrows: 2};
     this.isFirstThrow = true;
     this.canReroll = true;
   }
 
-  getHand(){
-    this.gameService.getHand().pipe(take(1)).subscribe(data => {
-      this.hand.id = data.id,
-      this.hand.numbers = this.trimNumbers(data.numbers),
-      this.hand.numberOfThrows = data.numberOfThrows
-    });
-  }
+  // getHand(){
+  //   this.gameService.getHand().pipe(take(1)).subscribe(data => {
+  //     this.hand.id = data.id,
+  //     this.hand.numbers = this.trimNumbers(data.numbers),
+  //     this.hand.numberOfThrows = data.numberOfThrows
+  //   });
+  // }
 
   trimNumbers(numbers: string){
     return numbers.replaceAll('-', '');
   }
 
-  throwDices(){
-    this.gameService.throwDices().pipe(take(1)).subscribe(data => {
+  throwDicesPlayer1(){
+    this.gameService.throwDicesPlayer1().pipe(take(1)).subscribe(data => {
       this.hand.id = data.id,
       this.hand.numbers = this.trimNumbers(data.numbers),
       this.hand.numberOfThrows = data.numberOfThrows,
-      console.log(data),
-      console.log(data.id),
       this.gameService.getHandPower(data.id).pipe(take(1)).subscribe(a => {
         this.handPower = HandPowerType[a.handPowerType]
       }),
-      this.getNumbers();
+      this.getNumbers(this.hand.numbers);
       this.isFirstThrow = false;
+    })
+    
+    this.gameService.throwDicesPlayer2().pipe(take(1)).subscribe(data => {
+      this.opponentHand.id = data.id,
+      this.opponentHand.handNumbers = this.trimNumbers(data.handNumbers),
+      this.opponentHand.numberOfThrows = data.numberOfThrows,
+      // this.gameService.getHandPower(data.id).pipe(take(1)).subscribe(a => {
+      //   this.handPower = HandPowerType[a.handPowerType]
+      // }),
+      this.getNumbersOpponent(this.opponentHand.handNumbers);
     })
   }
 
-  getNumbers(){
-    const numbers = this.trimNumbers(this.hand.numbers);
+  // throwDicesPlayer2(){
+  //   this.gameService.throwDicesPlayer1().pipe(take(1)).subscribe(data => {
+  //     this.hand.id = data.id,
+  //     this.hand.numbers = this.trimNumbers(data.numbers),
+  //     this.hand.numberOfThrows = data.numberOfThrows,
+  //     console.log(data),
+  //     console.log(data.id),
+  //     this.gameService.getHandPower(data.id).pipe(take(1)).subscribe(a => {
+  //       this.handPower = HandPowerType[a.handPowerType]
+  //     }),
+  //     this.getNumbers();
+  //     this.isFirstThrow = false;
+  //   })
+  // }
+
+  getNumbers(handNumbers: string){
+    const numbers = this.trimNumbers(handNumbers);
     var listOfNumbers: number[] = [];
 
     for(var i = 0; i < numbers.length; i++){
@@ -64,6 +90,17 @@ export class GameComponent implements OnInit{
     }
 
     this.handNumbers = listOfNumbers;
+  }
+
+  getNumbersOpponent(handNumbers: string){
+    const numbers = this.trimNumbers(handNumbers);
+    var listOfNumbers: number[] = [];
+
+    for(var i = 0; i < numbers.length; i++){
+      listOfNumbers.push(Number(numbers[i]));
+    }
+
+    this.opponentCombination = listOfNumbers;
   }
 
   reroll(){
@@ -75,7 +112,7 @@ export class GameComponent implements OnInit{
       this.gameService.getHandPower(data.id).pipe(take(1)).subscribe(a => {
         this.handPower = HandPowerType[a.handPowerType]
       }),
-      this.getNumbers();
+      this.getNumbers(this.hand.numbers);
       this.checkIfRerollIsPossible();
     });
 
