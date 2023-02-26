@@ -15,8 +15,10 @@
     <div class="player">
         <table>
             <tr>
-                <td *ngFor="let number of handNumbers">
-                    <img src="..\..\assets\images\{{number}}.png" class="diceImage"/>
+                <td *ngFor="let number of handNumbers; index as i">
+                    <a (click)="dicesForReroll(i)">
+                        <img src="..\..\assets\images\{{number}}.png" class="diceImage" />
+                    </a>
                 </td>
             </tr>
         </table>

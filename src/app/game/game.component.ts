@@ -18,6 +18,7 @@ export class GameComponent implements OnInit{
   handNumbers: number[] = [];
   isFirstThrow = true;
   canReroll = true;
+  listOfDicesForReroll: number[] = [];
   
   constructor(private gameService: GameComponentServiceService) { }
 
@@ -66,7 +67,7 @@ export class GameComponent implements OnInit{
   }
 
   reroll(){
-    this.gameService.rerollDices(this.hand.id,[1, 2]).pipe(take(1)).subscribe(data =>{
+    this.gameService.rerollDices(this.hand.id, this.listOfDicesForReroll).pipe(take(1)).subscribe(data =>{
       this.hand.numbers = this.trimNumbers(data.numbers),
       this.hand.numberOfThrows = data.numberOfThrows,
       console.log(data),
@@ -77,6 +78,8 @@ export class GameComponent implements OnInit{
       this.getNumbers();
       this.checkIfRerollIsPossible();
     });
+
+    this.listOfDicesForReroll = [];
   }
 
   checkIfRerollIsPossible(){
@@ -88,5 +91,20 @@ export class GameComponent implements OnInit{
   setNewRound(){
     this.isFirstThrow = true;
     this.canReroll = true;
+  }
+
+  dicesForReroll(indexAt: number){
+    if(indexAt === null){
+      return;
+    }
+
+    var item = this.listOfDicesForReroll.find(index => index == indexAt);
+
+    if(item === undefined){
+      this.listOfDicesForReroll.push(indexAt);
+    }else{
+      let index = this.listOfDicesForReroll.indexOf(indexAt);
+      delete this.listOfDicesForReroll[index];
+    }
   }
 }
